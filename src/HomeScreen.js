@@ -1,18 +1,36 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, Button, View } from 'react-native';
+import { View } from 'react-native';
 import Mybutton from './Component/Mybutton'
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'StudentDb.db' });
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-
-        };
+        db.transaction(function (txn) {
+            txn.executeSql(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='stud_Db'",
+                [],
+                function (tx, res) {
+                    console.log('item:', res.rows.length);
+                    if (res.rows.length == 0) {
+                        txn.executeSql('DROP TABLE IF EXISTS stud_Db', []);
+                        txn.executeSql(
+                            'CREATE TABLE IF NOT EXISTS stud_Db(student_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20), contact INT(10), address VARCHAR(255))',
+                            []
+                        );
+                        console.log("db");
+                        
+                    }
+                }
+            );
+        });
     }
-    handleNavigation = () => { this.props.navigation.navigate('RegisterUser') }
 
     render() {
+        console.log(this.props);
+
         return (
-            <View>
+            <View style={{top:100}}>
 
                 <Mybutton
                     title="Register"
