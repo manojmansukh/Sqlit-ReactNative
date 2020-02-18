@@ -4,6 +4,7 @@ import Mytextinput from './Component/Mytextinput'
 import Mybutton from './Component/Mybutton'
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'Database.db' });
+import {  registerStudent } from './Services/SqliteService'
 
 export default class RegisterUser extends React.Component {
     constructor(props) {
@@ -20,64 +21,17 @@ export default class RegisterUser extends React.Component {
         this.props.navigation.navigate('Register')
     }
     RegisterStudent = () => {
-        console.log("mjjjjj",this.state.name,this.state.address,this.state.contact);
-        var that = this;
-        const { name } = this.state;
-        const { contact } = this.state;
-        const { address } = this.state;
-        //alert(student_name, student_contact, student_address);
-        if (name) {
-            if (contact) {
-                if (address) {
-                    
-                    db.transaction(function (tx) {
-                        console.log("ererer");
+        registerStudent(this.state.name,this.state.address,this.state.contact,this.props);
 
-                        tx.executeSql(
-                            'INSERT INTO stud_Db (name, contact, address) VALUES (?,?,?)',
-                            [name, contact, address],
-                            (tx, results) => {
-                                console.log('Results', results.rowsAffected);
-                                if (results.rowsAffected > 0) {
-                                    Alert.alert(
-                                        'Success',
-                                        'You are Registered Successfully',
-                                        [
-                                            {
-                                                text: 'Ok',
-                                                onPress: () => that.props.navigation.navigate('HomeScreen')
-,
-                                               // onPress: () => console.log('Cancel Pressed'),  
-                                            },
-                                        ],
-                                        { cancelable: false }
-                                    );
-                                } else {
-                                    alert('Registration Failed');
-                                }
-                            }
-                        );
-                    });
-                } else {
-                    alert('Please fill Address');
-                }
-            } else {
-                alert('Please fill Contact Number');
-            }
-        } else {
-            alert('Please fill Name');
-        }
     };
     render() {
-        console.log(this.props);
         
         return (
             <View>
                 <View style={{ top: 100 }}>
                     <Mytextinput
                         placeholder={"Enter User Name"}
-                        onChangeText={(text) => { this.setState({ name: text },()=>{console.log("this",this.state.name);
-                        }) }}
+                        onChangeText={(text) => { this.setState({ name: text }) }}
                         style={{ padding: 10 }}
                     />
                     <Mytextinput
